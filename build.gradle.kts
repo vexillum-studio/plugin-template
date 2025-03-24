@@ -1,50 +1,52 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.10"
-    application
+    kotlin("jvm") version "1.9.0"
+    id("com.vexillum.plugincore.plugin") version "0.0.5"
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
-group = "co.vexillum"
-version = "1.0-SNAPSHOT"
+group = "com.example"
+version = "0.0.1"
 
-val jarName = "KotlinTest"
-val spigotVersion = "1.19.2-R0.1-SNAPSHOT"
-val mainClass = "com.vexillum.test.KotlinTest"
+val jvmTarget = "17"
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-        mavenContent {
-            releasesOnly()
+}
+
+dependencies {
+    // Detekt
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.18.0-RC2")
+    // Testing
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+}
+
+pluginCore {
+    projectName = "ExamplePlugin"
+    apiVersion = "1.19"
+    pluginCoreVersion = "0.1.5"
+    spigotVersion = "1.21.4-R0.1-SNAPSHOT"
+    publish {
+        gitHub {
+            publish = true
+            githubURL = "https://github.com/vexillum-studio/plugin-template"
+        }
+        local {
+            publish = false
         }
     }
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.spigotmc:spigot-api:$spigotVersion")
-    testImplementation(kotlin("test"))
-}
-
-tasks.withType<Jar> {
-    archiveFileName.set("$jarName.jar")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    manifest {
-        attributes["Main-Class"] = mainClass
-    }
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get()
-            .filter { it.name.endsWith("jar") }
-            .map { zipTree(it) }
-    })
+detekt {
+    autoCorrect = true
+    buildUponDefaultConfig = true
+    config = files("$projectDir/detekt.yml")
+    source = files("src/main/kotlin", "src/test/kotlin")
 }
 
 tasks.test {
@@ -52,5 +54,5 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "16"
+    kotlinOptions.jvmTarget = jvmTarget
 }

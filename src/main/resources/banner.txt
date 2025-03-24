@@ -1,0 +1,10 @@
+{bold}{green}______________________________________________________________{reset}
+                                                                           {reset}
+  {bold}{cyan}{pluginName} {white}v.{bold}{pluginVersion}                  {reset}
+                                                                           {reset}
+  {cyan}{date} {bold}{white}- {reset}{cyan}{time}                          {reset}
+                                                                           {reset}
+  {magenta}{messageOfTheDay}                                               {reset}
+                                                                           {reset}
+  {yellow}Powered by {red}PluginCore {bold}{white}{pluginCoreVersion}      {reset}
+{bold}{green}______________________________________________________________{reset}
